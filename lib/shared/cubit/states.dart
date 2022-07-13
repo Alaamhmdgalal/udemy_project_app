@@ -18,3 +18,6 @@ class ToDoLoadingGetFromDatabaseBar extends ToDoAppStates{}
 
 class ToDoBottomSheetState extends ToDoAppStates{}
 
+class NewsDarkThemeState extends ToDoAppStates{}
+
+

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:udemy_project/modules/web_view/web_view_screen.dart';
 import 'package:udemy_project/shared/cubit/cubit.dart';
 
 Widget defaultButton({
@@ -135,97 +136,107 @@ Widget buildTaskItem(Map model, context) => Dismissible(
 
 Widget noTasksBuilder({
   required List<Map> tasks,
-}) => tasks.length > 0
-    ? ListView.separated(
-        itemBuilder: (context, index) => buildTaskItem(tasks[index], context),
-        separatorBuilder: (context, index) => separator(),
-        itemCount: tasks.length,
-      )
-    : Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Icon(
-              Icons.menu,
-              size: 100.0,
-              color: Colors.grey,
+}) =>
+    tasks.length > 0
+        ? ListView.separated(
+            itemBuilder: (context, index) =>
+                buildTaskItem(tasks[index], context),
+            separatorBuilder: (context, index) => separator(),
+            itemCount: tasks.length,
+          )
+        : Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                Icon(
+                  Icons.menu,
+                  size: 100.0,
+                  color: Colors.grey,
+                ),
+                Text(
+                  'Add Tasks',
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
             ),
-            Text(
-              'Add Tasks',
-              style: TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey,
+          );
+
+Widget separator() => Container(
+      width: double.infinity,
+      height: 1.0,
+      color: Colors.grey[300],
+    );
+
+//News App
+
+Widget newsItem(article, context) => InkWell(
+      onTap: () {
+        navigator(context, WebViewScreen(article['url']));
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Row(
+          children: [
+            Container(
+              width: 120.0,
+              height: 120.0,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10.0),
+                image: DecorationImage(
+                    image: NetworkImage('${article['urlToImage']}'),
+                    fit: BoxFit.cover),
+              ),
+            ),
+            const SizedBox(
+              width: 20.0,
+            ),
+            Expanded(
+              child: Container(
+                height: 120.0,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        '${article['title']}',
+                        style: Theme.of(context).textTheme.bodyText1,
+                        maxLines: 4,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Text(
+                      '${article['publishedAt']}',
+                      style: const TextStyle(
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
         ),
+      ),
+    );
+
+Widget newsArticles(list, context, {isSearch = false}) => list.length > 0
+    ? ListView.separated(
+        physics: BouncingScrollPhysics(),
+        itemBuilder: (context, index) => newsItem(list[index], context),
+        separatorBuilder: (context, index) => separator(),
+        itemCount: 10,
+      )
+    : isSearch ? Container() : const Center(
+        child: CircularProgressIndicator(),
       );
 
-
-Widget separator() => Container(
-  width: double.infinity,
-  height: 1.0,
-  color: Colors.grey[300],
-);
-
-//News App
-
-Widget newsItem(article) => Padding(
-  padding: const EdgeInsets.all(20.0),
-  child: Row(
-    children: [
-      Container(
-        width: 120.0,
-        height: 120.0,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10.0),
-          image: DecorationImage(
-              image: NetworkImage('${article['urlToImage']}'),
-              fit: BoxFit.cover),
-        ),
+void navigator(context, widget) => Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => widget,
       ),
-      const SizedBox(
-        width: 20.0,
-      ),
-      Expanded(
-        child: Container(
-          height: 120.0,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Text(
-                  '${article['title']}',
-                  style: const TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  maxLines: 4,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              Text(
-                '${article['publishedAt']}',
-                style: const TextStyle(
-                  color: Colors.grey,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    ],
-  ),
-);
-
-Widget newsArticles(list) => list.length > 0
-    ? ListView.separated(
-  physics: BouncingScrollPhysics(),
-  itemBuilder: (context, index) => newsItem(list[index]),
-  separatorBuilder: (context, index) => separator(),
-  itemCount: 10,
-)
-    : const Center(
-  child: CircularProgressIndicator(),
-);
+    );

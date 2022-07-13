@@ -33,19 +33,12 @@ class NewsCubit extends Cubit<NewsAppStates>{
       ),
       label: 'Science',
     ),
-    const BottomNavigationBarItem(
-      icon: Icon(
-        Icons.settings,
-      ),
-      label: 'Settings',
-    ),
   ];
 
   List<Widget> screens = [
     BusinessScreen(),
     SportsScreen(),
     ScienceScreen(),
-    SettingsScreen(),
   ];
 
   void bottomNavBarChange(int index)
@@ -67,7 +60,6 @@ class NewsCubit extends Cubit<NewsAppStates>{
           'apiKey' : '130ff267146a4cde9d50f3fe722c8ee9',
         }
     ).then((value){
-      // print(value.data.toString());
       businessData = value.data['articles'];
 
       emit(NewsBusinessSuccessState());
@@ -91,7 +83,6 @@ class NewsCubit extends Cubit<NewsAppStates>{
           'apiKey' : '130ff267146a4cde9d50f3fe722c8ee9',
         }
     ).then((value){
-      // print(value.data.toString());
       sportsData = value.data['articles'];
 
       emit(NewsSportsSuccessState());
@@ -115,7 +106,6 @@ class NewsCubit extends Cubit<NewsAppStates>{
           'apiKey' : '130ff267146a4cde9d50f3fe722c8ee9',
         }
     ).then((value){
-      // print(value.data.toString());
       scienceData = value.data['articles'];
 
       emit(NewsScienceSuccessState());
@@ -125,4 +115,31 @@ class NewsCubit extends Cubit<NewsAppStates>{
       emit(NewsScienceFailedState(error.toString()));
     });
   }
+
+
+  List<dynamic> searchData = [];
+
+  void getSearchData(value)
+  {
+    emit(NewsSearchLoadingState());
+
+    searchData = [];
+
+    DioHelper.getData(
+        methodUrl: 'v2/everything',
+        query: {
+          'q' : '$value',
+          'apiKey' : '130ff267146a4cde9d50f3fe722c8ee9',
+        }
+    ).then((value){
+      searchData = value.data['articles'];
+
+      emit(NewsSearchSuccessState());
+    }).catchError((error)
+    {
+      print(error.toString());
+      emit(NewsSearchFailedState(error.toString()));
+    });
+  }
+
 }

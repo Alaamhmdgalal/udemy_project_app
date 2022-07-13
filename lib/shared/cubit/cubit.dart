@@ -4,14 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:udemy_project/shared/cubit/states.dart';
+import 'package:udemy_project/shared/network/local/cache_helper.dart';
 
 import '../../modules/archived_tasks/archived_tasks_screen.dart';
 import '../../modules/done_tasks/done_tasks_screen.dart';
 import '../../modules/new_tasks/new_tasks_screen.dart';
 
-class ToDoAppCubit extends Cubit<ToDoAppStates>
-{
+class ToDoAppCubit extends Cubit<ToDoAppStates> {
   ToDoAppCubit() : super(InitialToDoState());
+
   static ToDoAppCubit get(context) => BlocProvider.of(context);
 
   int currentIndex = 0;
@@ -34,12 +35,12 @@ class ToDoAppCubit extends Cubit<ToDoAppStates>
     'Archived Tasks',
   ];
 
-  void changeIndex(int index){
+  void changeIndex(int index) {
     currentIndex = index;
     emit(ToDoAppNavBar());
   }
 
-  void createDatabase(){
+  void createDatabase() {
     openDatabase(
       'todo.db',
       version: 1,
@@ -47,7 +48,7 @@ class ToDoAppCubit extends Cubit<ToDoAppStates>
         print('Created');
         database
             .execute(
-            'CREATE TABLE tasks (id INTEGER PRIMARY KEY, title TEXT, time TEXT, date TEXT, status TEXT)')
+                'CREATE TABLE tasks (id INTEGER PRIMARY KEY, title TEXT, time TEXT, date TEXT, status TEXT)')
             .then((value) {
           print('Table is created');
         }).catchError((error) {
@@ -57,7 +58,7 @@ class ToDoAppCubit extends Cubit<ToDoAppStates>
       onOpen: (database) {
         getDataFromDatabase(database);
       },
-    ).then((value){
+    ).then((value) {
       database = value;
       emit(ToDoCreateDatabaseBar());
     });
@@ -69,10 +70,10 @@ class ToDoAppCubit extends Cubit<ToDoAppStates>
     required String date,
   }) async {
     await database.transaction((txn) async {
-      txn.rawInsert(
-          'INSERT INTO tasks(title, time, date, status) VALUES ("$title", "$time", "$date", "New")'
-      ).then((value)
-      {
+      txn
+          .rawInsert(
+              'INSERT INTO tasks(title, time, date, status) VALUES ("$title", "$time", "$date", "New")')
+          .then((value) {
         print('$value inserted successfully');
         emit(ToDoInsertInDatabaseBar());
 
@@ -91,12 +92,10 @@ class ToDoAppCubit extends Cubit<ToDoAppStates>
     emit(ToDoLoadingGetFromDatabaseBar());
 
     database.rawQuery('SELECT * FROM tasks').then((value) {
-
-      value.forEach((element)
-      {
-        if(element['status'] == 'New')
+      value.forEach((element) {
+        if (element['status'] == 'New')
           newTasks.add(element);
-        else if(element['status'] == 'Done')
+        else if (element['status'] == 'Done')
           doneTasks.add(element);
         else
           archivedTasks.add(element);
@@ -107,40 +106,49 @@ class ToDoAppCubit extends Cubit<ToDoAppStates>
   }
 
   void changeBottomSheetState({
-   required bool isShown,
+    required bool isShown,
     required IconData icon,
-  })
-  {
+  }) {
     isBottomSheetShown = isShown;
     fabIcon = icon;
     emit(ToDoBottomSheetState());
   }
 
   void updateTaskStatus({
-  required String status,
+    required String status,
     required int id,
-}) async
-  {
+  }) async {
     database.rawUpdate(
-        'UPDATE tasks SET status = ? WHERE id = ?',
-        ['$status', '$id'],
-    ).then((value)
-    {
+      'UPDATE tasks SET status = ? WHERE id = ?',
+      ['$status', '$id'],
+    ).then((value) {
       getDataFromDatabase(database);
       emit(ToDoUpdateDatabase());
     });
   }
 
   void deleteTask({
-  required int id,
-  })
-  {
-    database.rawDelete('DELETE FROM tasks WHERE id = ?', [id]).
-    then((value)
-    {
+    required int id,
+  }) {
+    database.rawDelete('DELETE FROM tasks WHERE id = ?', [id]).then((value) {
       getDataFromDatabase(database);
       emit(ToDoDeleteDatabase());
     });
   }
 
+  //I put this here because the other cubit is already initialized in layout
+
+  bool isDark = false;
+
+  void changeAppMode({bool? fromShared}) {
+    if (fromShared != null) {
+      isDark = fromShared;
+      emit(NewsDarkThemeState());
+    } else {
+      isDark = !isDark;
+      CacheHelper.putBoolean(key: 'isDark', value: isDark).then((value) {
+        emit(NewsDarkThemeState());
+      });
+    }
+  }
 }

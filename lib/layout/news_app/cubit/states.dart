@@ -36,3 +36,14 @@ class NewsScienceFailedState extends NewsAppStates
 }
 
 class NewsScienceLoadingState extends NewsAppStates{}
+
+class NewsSearchSuccessState extends NewsAppStates{}
+
+class NewsSearchFailedState extends NewsAppStates
+{
+  final String error;
+
+  NewsSearchFailedState(this.error);
+}
+
+class NewsSearchLoadingState extends NewsAppStates{}
