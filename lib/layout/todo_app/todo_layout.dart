@@ -3,14 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:udemy_project/modules/archived_tasks/archived_tasks_screen.dart';
-import 'package:udemy_project/modules/done_tasks/done_tasks_screen.dart';
-import 'package:udemy_project/modules/new_tasks/new_tasks_screen.dart';
 import 'package:udemy_project/shared/components/components.dart';
 import 'package:udemy_project/shared/cubit/cubit.dart';
 import 'package:udemy_project/shared/cubit/states.dart';
 
-import '../shared/components/constants.dart';
+import '../../shared/components/constants.dart';
 
 class HomeLayout extends StatelessWidget {
 

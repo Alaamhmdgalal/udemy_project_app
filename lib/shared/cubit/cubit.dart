@@ -3,12 +3,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:udemy_project/modules/todo_app/archived_tasks/archived_tasks_screen.dart';
+import 'package:udemy_project/modules/todo_app/done_tasks/done_tasks_screen.dart';
+import 'package:udemy_project/modules/todo_app/new_tasks/new_tasks_screen.dart';
 import 'package:udemy_project/shared/cubit/states.dart';
 import 'package:udemy_project/shared/network/local/cache_helper.dart';
 
-import '../../modules/archived_tasks/archived_tasks_screen.dart';
-import '../../modules/done_tasks/done_tasks_screen.dart';
-import '../../modules/new_tasks/new_tasks_screen.dart';
 
 class ToDoAppCubit extends Cubit<ToDoAppStates> {
   ToDoAppCubit() : super(InitialToDoState());

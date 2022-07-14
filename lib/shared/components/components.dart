@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:udemy_project/modules/web_view/web_view_screen.dart';
+import 'package:udemy_project/modules/news_app/web_view/web_view_screen.dart';
 import 'package:udemy_project/shared/cubit/cubit.dart';
 
 Widget defaultButton({
@@ -230,9 +230,11 @@ Widget newsArticles(list, context, {isSearch = false}) => list.length > 0
         separatorBuilder: (context, index) => separator(),
         itemCount: 10,
       )
-    : isSearch ? Container() : const Center(
-        child: CircularProgressIndicator(),
-      );
+    : isSearch
+        ? Container()
+        : const Center(
+            child: CircularProgressIndicator(),
+          );
 
 void navigator(context, widget) => Navigator.push(
       context,
@@ -240,3 +242,11 @@ void navigator(context, widget) => Navigator.push(
         builder: (context) => widget,
       ),
     );
+
+void navigateAndFinish(context, widget) => Navigator.pushAndRemoveUntil(
+    context,
+    MaterialPageRoute(
+        builder: (context) => widget,
+    ),
+    (route) => false,     //to delete all the past routes
+);

@@ -5,7 +5,6 @@ import 'package:udemy_project/shared/components/components.dart';
 import 'package:udemy_project/shared/cubit/cubit.dart';
 import 'package:udemy_project/shared/cubit/states.dart';
 
-import '../../shared/components/constants.dart';
 
 class NewTasksScreen extends StatelessWidget {
   @override
